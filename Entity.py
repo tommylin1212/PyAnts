@@ -4,6 +4,7 @@ import pygame
 
 red = (255, 0, 0)
 
+
 class Entity:
     type = None
     location = None
@@ -32,7 +33,7 @@ class Entity:
         self.shape = shape
         self.size = size
         self.speed = speed
-        self.heading = Vector((math.cos(math.radians(heading)),math.sin(math.radians(heading)))).norm()
+        self.heading = Vector((math.cos(math.radians(heading)), math.sin(math.radians(heading)))).norm()
         self.max_speed = max_speed
         self.max_force = max_force
         self.mass = mass
@@ -80,27 +81,37 @@ class Entity:
         return self.speed * math.sin(math.radians(self.heading))
 
     def get_new_heading(self, desired):
-        steering = desired-self.heading
+        steering = desired - self.heading
         steering = steering.norm()
         steering *= self.max_speed
         steering
         return steering
 
     def update_new_pos(self, target):
-        desired=target-self.location
-        desired=desired.norm()
-        t_heading = desired#+self.get_new_heading(desired)
+        desired = target - self.location
+        desired = desired.norm()
+        t_heading = desired  # +self.get_new_heading(desired)
 
-        self.set_heading(t_heading.norm()*self.max_speed)
-        self.set_location(self.location+self.heading)
+        self.set_heading(t_heading.norm())  # *self.max_speed)
+        self.set_location(self.location + self.heading)
 
     def rotate_triangle(self, location, scale, heading):
         points = [(-0.5, -0.866), (-0.5, 0.866), (2.0, 0.0)]
         rotated_point = [pygame.math.Vector2(p).rotate(self.heading.get_angle()) for p in points]
 
         triangle_points = [(self.get_location().tuple() + p * scale) for p in rotated_point]
+
+        '''ox, oy = self.get_location().tuple()
+        px, py = 
+
+        qx = ox + math.cos(angle) * (px - ox) - math.sin(angle) * (py - oy)
+        qy = oy + math.sin(angle) * (px - ox) + math.cos(angle) * (py - oy)
+        '''
+
         return triangle_points
 
     def draw(self, screen):
-        points=self.rotate_triangle(self.location.tuple(), self.get_size(), self.heading)
-        pygame.draw.polygon(screen, red, points,1)
+        points = self.rotate_triangle(self.location.tuple(), self.get_size(), self.heading)
+        return pygame.draw.polygon(screen, red, points, 1)
+
+

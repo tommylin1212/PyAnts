@@ -8,10 +8,13 @@ pygame.init()
 white = (255, 255, 255)
 black = (0, 0, 0)
 
+screenW = 1400
+screenH = 1400
+
 red = (255, 0, 0)
 green = (0, 255, 0)
 blue = (0, 0, 255)
-screen = pygame.display.set_mode((800, 800))
+screen = pygame.display.set_mode((screenW, screenH))
 
 colors = [red, green, blue]
 
@@ -45,23 +48,23 @@ entities = []
 desireds = []
 for i in range(100):
     entities.append(
-        Entity("agent", (random.randint(0, 800), random.randint(0, 800)), random.uniform(0, 2), random.uniform(0, 360),
+        Entity("agent", (random.randint(0, screenW), random.randint(0, screenH)), random.uniform(0, 2),
+               random.uniform(0, 360),
                random.uniform(6, 10), "circle", 1, 0.5, 1))
-    desireds.append(Vector((random.uniform(0, 800), random.uniform(0, 800))))
-test_E = Entity("agent", (400, 400), 1, 35, 6, "circle", 1, 0.5, 1)
-desired = Vector((200, 200))
+    desireds.append(Vector((random.uniform(0, screenW), random.uniform(0, screenH))))
+
 c = 0
 # Game Loop
+
 while running:
-    # print(desired.tuple())
+
     screen.fill(black)
     for num, e in enumerate(entities):
 
         if (e.get_location() - desireds[num]).get_length() < 1:
-            desireds[num] = Vector((random.randint(0, 800), random.randint(0, 800)))
+            desireds[num] = Vector((random.randint(0, screenW), random.randint(0, screenH)))
         e.update_new_pos(desireds[num])
         e.draw(screen)
-
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
