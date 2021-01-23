@@ -6,7 +6,7 @@ red = (255, 0, 0)
 
 
 class Entity:
-    type = None
+    kind = None
     location = None
     shape = None
     size = None
@@ -17,7 +17,7 @@ class Entity:
     mass = None
 
     def __init__(self):
-        self.type = None
+        self.kind = None
         self.location = None
         self.shape = None
         self.size = None
@@ -27,19 +27,19 @@ class Entity:
         self.max_force = None
         self.mass = None
 
-    def __init__(self, type, location, speed, heading, size, shape, max_speed, max_force, mass):
-        self.type = type
+    def __init__(self, kind, location, speed, heading, size, shape, max_speed, max_force, mass):
+        self.kind = kind
         self.location = Vector(location)
         self.shape = shape
         self.size = size
-        self.speed = speed
+        self.speed = 4*1/size
         self.heading = Vector((math.cos(math.radians(heading)), math.sin(math.radians(heading)))).norm()
         self.max_speed = max_speed
         self.max_force = max_force
-        self.mass = mass
+        self.mass = size*size
 
-    def get_type(self):
-        return self.type
+    def get_kind(self):
+        return self.kind
 
     def get_location(self):
         return self.location
@@ -56,8 +56,8 @@ class Entity:
     def get_heading(self):
         return self.heading
 
-    def set_type(self, t):
-        self.type = t
+    def set_kind(self, t):
+        self.kind = t
 
     def set_location(self, l):
         self.location = l
@@ -81,21 +81,21 @@ class Entity:
         return self.speed * math.sin(math.radians(self.heading))
 
     def get_new_heading(self, desired):
-        steering = desired - self.heading
-        steering = steering.norm()
-        steering *= self.max_speed
-        steering
-        return steering
+        turning_vector = desired - self.heading
+        if turning_vector.get_length() * self.mass < self.max_force:
+
+            return desired
+        else:
+
+            return (turning_vector.norm()/self.mass) + self.heading
 
     def update_new_pos(self, target):
         desired = target - self.location
-        desired = desired.norm()
-        t_heading = desired  # +self.get_new_heading(desired)
+        desired = self.get_new_heading(desired)
+        self.set_heading(desired.norm())
+        self.set_location(self.location + self.heading*self.speed)
 
-        self.set_heading(t_heading.norm())  # *self.max_speed)
-        self.set_location(self.location + self.heading)
-
-    def rotate_triangle(self, location, scale, heading):
+    def rotate_triangle(self, scale):
         points = [(-0.5, -0.866), (-0.5, 0.866), (2.0, 0.0)]
         rotated_point = [pygame.math.Vector2(p).rotate(self.heading.get_angle()) for p in points]
 
@@ -111,7 +111,5 @@ class Entity:
         return triangle_points
 
     def draw(self, screen):
-        points = self.rotate_triangle(self.location.tuple(), self.get_size(), self.heading)
+        points = self.rotate_triangle(self.get_size())
         return pygame.draw.polygon(screen, red, points, 1)
-
-

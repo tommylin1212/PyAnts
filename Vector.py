@@ -156,7 +156,7 @@ class Vector:
             return Vector(tuple(new_components))
 
         else:
-            raise TypeError('unsupported type in vector multiplication')
+            raise TypeError('unsupported kind in vector multiplication')
 
     def __rmul__(self, other):
         if type(other) in [int, float]:
@@ -233,3 +233,9 @@ class Vector:
     def get_angle(self):
 
         return math.degrees(math.atan2(self._components[1], self._components[0]))
+
+    def getX(self):
+        return self._components[0]
+
+    def getY(self):
+        return self._components[1]
